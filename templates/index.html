@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 Статистика</h2>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <h3>👥 Пользователи</h3>
+        <div class="value">{{ stats.users }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>📦 Заказы</h3>
+        <div class="value">{{ stats.orders }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>💰 Депозиты</h3>
+        <div class="value">{{ stats.deposits }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>🔗 Пиры</h3>
+        <div class="value">{{ stats.peers }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>🎟️ Промокоды</h3>
+        <div class="value">{{ stats.promocodes }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>✅ Активные промокоды</h3>
+        <div class="value">{{ stats.active_promocodes }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>📈 Использований промо</h3>
+        <div class="value">{{ stats.promo_uses }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>💸 Всего скидок</h3>
+        <div class="value">{{ "%.2f"|format(stats.total_discount) }} ₽</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>🎁 Бонусы</h3>
+        <div class="value">{{ stats.bonuses }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <h3>✅ Активные бонусы</h3>
+        <div class="value">{{ stats.active_bonuses }}</div>
+    </div>
+</div>
+{% endblock %}

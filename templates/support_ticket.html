@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Чат #{{ ticket.id }} - CRM{% endblock %}
+
+{% block head %}
+<style>
+    .messages {
+        max-height: 600px;
+        overflow-y: auto;
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+    .message {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        border-radius: 8px;
+        max-width: 70%;
+    }
+    .message.user {
+        background: #e3f2fd;
+        margin-left: auto;
+        margin-right: 0;
+    }
+    .message.admin {
+        background: #f1f8e9;
+    }
+    .message-header {
+        font-size: 0.85rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    .message-text {
+        word-wrap: break-word;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>💬 Чат #{{ ticket.id }}</h2>
+    <p><strong>User ID:</strong> <a href="{{ url_for('users_view', user_id=ticket.user_id) }}">{{ ticket.user_id }}</a></p>
+    <p><strong>Статус:</strong> {{ ticket.status }}</p>
+    <p><strong>Создан:</strong> {{ ticket.created_at }}</p>
+    
+    <form method="post" action="{{ url_for('support_ticket_close', ticket_id=ticket.id) }}" style="display: inline;">
+        <button type="submit" class="btn btn-danger">🔒 Закрыть чат</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>📨 Сообщения ({{ messages|length }})</h2>
+    <div class="messages">
+        {% for msg in messages %}
+        <div class="message {{ msg.sender }}">
+            <div class="message-header">
+                <strong>{{ '👤 Пользователь' if msg.sender == 'user' else '🛠️ Админ' }}</strong> • {{ msg.created_at }}
+            </div>
+            <div class="message-text">{{ msg.message }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <form method="post" action="{{ url_for('support_ticket_reply', ticket_id=ticket.id) }}">
+        <div class="form-group">
+            <textarea name="message" required placeholder="Введите ответ..." style="min-height: 100px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">📤 Отправить</button>
+    </form>
+</div>
+
+<a href="{{ url_for('support_chat_page') }}" class="btn btn-secondary">← Назад к списку</a>
+{% endblock %}

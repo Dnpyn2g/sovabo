@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Заказы - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📦 Заказы</h2>
+    
+    <form method="get" style="margin-bottom: 1rem;">
+        <div class="form-group">
+            <input type="text" name="q" value="{{ q }}" placeholder="Поиск по ID или user_id">
+        </div>
+        <button type="submit" class="btn">🔍 Найти</button>
+        {% if q %}
+            <a href="{{ url_for('orders_list') }}" class="btn btn-secondary">Сбросить</a>
+        {% endif %}
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+                <th>Дата</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td><a href="{{ url_for('users_view', user_id=row.user_id) }}">{{ row.user_id }}</a></td>
+                <td>{{ row.order_type }}</td>
+                <td>{{ row.status }}</td>
+                <td>{{ "%.2f"|format(row.amount or 0) }} ₽</td>
+                <td>{{ row.created_at }}</td>
+                <td>
+                    <a href="{{ url_for('orders_view', order_id=row.id) }}" class="btn btn-secondary">👁️ Просмотр</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

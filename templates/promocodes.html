@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Промокоды - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>🎟️ Промокоды</h2>
+    <a href="{{ url_for('promocodes_new') }}" class="btn btn-success">➕ Создать промокод</a>
+</div>
+
+<div class="card">
+    <h3>Статистика</h3>
+    <p><strong>Всего промокодов:</strong> {{ stats.total }}</p>
+    <p><strong>Активных:</strong> {{ stats.active }}</p>
+    <p><strong>Использований:</strong> {{ stats.uses }}</p>
+    <p><strong>Всего скидок выдано:</strong> {{ "%.2f"|format(stats.total_discount) }} ₽</p>
+</div>
+
+<div class="card">
+    <h3>Список промокодов</h3>
+    {% if promocodes %}
+    <table>
+        <thead>
+            <tr>
+                <th>Код</th>
+                <th>Тип скидки</th>
+                <th>Значение</th>
+                <th>Макс. использований</th>
+                <th>Использовано</th>
+                <th>Активен</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for promo in promocodes %}
+            <tr>
+                <td><strong>{{ promo.code }}</strong></td>
+                <td>{{ promo.discount_type }}</td>
+                <td>{{ promo.discount_value }}</td>
+                <td>{{ promo.max_uses or '∞' }}</td>
+                <td>{{ promo.used_count }}</td>
+                <td>{{ '✅' if promo.is_active else '❌' }}</td>
+                <td>
+                    <a href="{{ url_for('promocode_view', promo_id=promo.id) }}" class="btn btn-secondary">👁️ Просмотр</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Промокодов пока нет</p>
+    {% endif %}
+</div>
+{% endblock %}

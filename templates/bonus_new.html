@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Новый бонус - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>➕ Создать бонус</h2>
+    
+    <div style="background: #e3f2fd; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+        <strong>💡 Примеры использования:</strong>
+        <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <li><strong>Фиксированный бонус:</strong> При пополнении от 100$ начисляется +50$</li>
+            <li><strong>Множитель x2:</strong> При пополнении от 500$ сумма удваивается (500$ → 1000$)</li>
+            <li><strong>Множитель x1.5:</strong> При пополнении от 1000$ сумма увеличивается в 1.5 раза (1000$ → 1500$)</li>
+        </ul>
+    </div>
+    
+    <form method="post" action="{{ url_for('bonuses_create') }}">
+        <div class="form-group">
+            <label>Минимальная сумма пополнения *</label>
+            <input type="number" name="min_amount" step="0.01" required placeholder="100">
+        </div>
+        
+        <div class="form-group">
+            <label>Тип бонуса *</label>
+            <select name="bonus_type" id="bonus_type" required onchange="updateBonusLabel()">
+                <option value="fixed">Фиксированная сумма (+)</option>
+                <option value="multiplier">Множитель (x)</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label id="bonus_label">Сумма бонуса *</label>
+            <input type="number" name="bonus_amount" step="0.01" required placeholder="10" id="bonus_amount">
+            <small id="bonus_hint" style="color: #666;">Например: 10 = +10$ к пополнению</small>
+        </div>
+        
+        <div class="form-group">
+            <label>Описание</label>
+            <input type="text" name="description" placeholder="Бонус за первое пополнение">
+        </div>
+        
+        <script>
+        function updateBonusLabel() {
+            const type = document.getElementById('bonus_type').value;
+            const label = document.getElementById('bonus_label');
+            const hint = document.getElementById('bonus_hint');
+            const input = document.getElementById('bonus_amount');
+            
+            if (type === 'multiplier') {
+                label.textContent = 'Множитель *';
+                hint.textContent = 'Например: 2 = пополнение x2 (100$ → 200$)';
+                input.placeholder = '2';
+            } else {
+                label.textContent = 'Сумма бонуса *';
+                hint.textContent = 'Например: 10 = +10$ к пополнению';
+                input.placeholder = '10';
+            }
+        }
+        </script>
+        
+        <div class="form-group">
+            <label>Активен</label>
+            <input type="checkbox" name="is_active" checked>
+        </div>
+        
+        <button type="submit" class="btn btn-success">💾 Создать</button>
+        <a href="{{ url_for('bonuses_list') }}" class="btn btn-secondary">❌ Отмена</a>
+    </form>
+</div>
+{% endblock %}

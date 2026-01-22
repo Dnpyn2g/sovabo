@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Бонусы - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>🎁 Бонусы за пополнение</h2>
+    <p style="color: #666; margin-bottom: 1rem;">Настройка бонусов при пополнении баланса пользователями. Применяется наибольший подходящий бонус по минимальной сумме.</p>
+    <a href="{{ url_for('bonuses_new') }}" class="btn btn-success">➕ Создать бонус</a>
+</div>
+
+<div class="card">
+    <h3>Список бонусов</h3>
+    {% if bonuses %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Мин. сумма</th>
+                <th>Тип</th>
+                <th>Бонус</th>
+                <th>Пример</th>
+                <th>Описание</th>
+                <th>Активен</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bonus in bonuses %}
+            <tr>
+                <td>{{ bonus.id }}</td>
+                <td>{{ "%.2f"|format(bonus.min_amount) }} $</td>
+                <td>
+                    {% if bonus.bonus_type == 'multiplier' %}
+                    ✖️ Множитель
+                    {% else %}
+                    ➕ Фиксированный
+                    {% endif %}
+                </td>
+                <td>
+                    {% if bonus.bonus_type == 'multiplier' %}
+                    <strong style="color: #e74c3c;">x{{ "%.1f"|format(bonus.bonus_amount) }}</strong>
+                    {% else %}
+                    <strong style="color: #27ae60;">+{{ "%.2f"|format(bonus.bonus_amount) }} $</strong>
+                    {% endif %}
+                </td>
+                <td style="font-size: 0.9rem; color: #666;">
+                    {% if bonus.bonus_type == 'multiplier' %}
+                    {{ "%.0f"|format(bonus.min_amount) }}$ → <strong>{{ "%.0f"|format(bonus.min_amount * bonus.bonus_amount) }}$</strong>
+                    {% else %}
+                    {{ "%.0f"|format(bonus.min_amount) }}$ → <strong>{{ "%.0f"|format(bonus.min_amount + bonus.bonus_amount) }}$</strong>
+                    {% endif %}
+                </td>
+                <td>{{ bonus.description or '—' }}</td>
+                <td>{{ '✅' if bonus.is_active else '❌' }}</td>
+                <td>
+                    <form method="post" action="{{ url_for('bonuses_delete', bonus_id=bonus.id) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Удалить бонус?')">🗑️</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Бонусов пока нет</p>
+    {% endif %}
+</div>
+{% endblock %}

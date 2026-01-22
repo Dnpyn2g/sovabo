@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Депозиты - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>💰 Депозиты</h2>
+    
+    <form method="get" style="margin-bottom: 1rem;">
+        <div class="form-group">
+            <input type="text" name="q" value="{{ q }}" placeholder="Поиск по ID или user_id">
+        </div>
+        <button type="submit" class="btn">🔍 Найти</button>
+        {% if q %}
+            <a href="{{ url_for('deposits_list') }}" class="btn btn-secondary">Сбросить</a>
+        {% endif %}
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>User ID</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td><a href="{{ url_for('users_view', user_id=row.user_id) }}">{{ row.user_id }}</a></td>
+                <td>{{ "%.2f"|format(row.amount or 0) }} ₽</td>
+                <td>{{ row.status }}</td>
+                <td>{{ row.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

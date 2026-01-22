@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👥 Пользователи</h2>
+    
+    <form method="get" style="margin-bottom: 1rem;">
+        <div class="form-group">
+            <input type="text" name="q" value="{{ q }}" placeholder="Поиск по user_id или username">
+        </div>
+        <button type="submit" class="btn">🔍 Найти</button>
+        {% if q %}
+            <a href="{{ url_for('users_list') }}" class="btn btn-secondary">Сбросить</a>
+        {% endif %}
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Баланс</th>
+                <th>Реферер</th>
+                <th>Заработал</th>
+                <th>Ставка</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                <td>{{ row.user_id }}</td>
+                <td>{{ row.username or '—' }}</td>
+                <td>{{ "%.2f"|format(row.balance or 0) }} ₽</td>
+                <td>{{ row.referrer_id or '—' }}</td>
+                <td>{{ "%.2f"|format(row.ref_earned or 0) }} ₽</td>
+                <td>{{ row.ref_rate or 0 }}%</td>
+                <td>
+                    <a href="{{ url_for('users_view', user_id=row.user_id) }}" class="btn btn-secondary">👁️ Просмотр</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>⚙️ Настройки</h2>
+    
+    <form method="post" action="{{ url_for('settings_update') }}">
+        <div class="form-group">
+            <label>Приветственное сообщение (поддерживается HTML)</label>
+            <textarea name="welcome_message" required>{{ welcome_message }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success">💾 Сохранить</button>
+    </form>
+</div>
+{% endblock %}

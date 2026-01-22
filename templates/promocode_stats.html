@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика промокодов - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📊 Статистика промокодов</h2>
+    
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Всего промокодов</h3>
+            <div class="value">{{ stats.total }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Активных</h3>
+            <div class="value">{{ stats.active }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Использований</h3>
+            <div class="value">{{ stats.uses }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <h3>Всего скидок</h3>
+            <div class="value">{{ "%.2f"|format(stats.total_discount) }} ₽</div>
+        </div>
+    </div>
+</div>
+
+<a href="{{ url_for('promocodes_list') }}" class="btn btn-secondary">← Назад к списку</a>
+{% endblock %}

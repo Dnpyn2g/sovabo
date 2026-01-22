@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователь {{ u.user_id }} - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>👤 Пользователь {{ u.user_id }}</h2>
+    <p><strong>Username:</strong> {{ u.username or '—' }}</p>
+    <p><strong>Баланс:</strong> {{ "%.2f"|format(u.balance or 0) }} ₽</p>
+    <p><strong>Реферер:</strong> {{ u.referrer_id or '—' }}</p>
+    <p><strong>Заработано с рефералов:</strong> {{ "%.2f"|format(u.ref_earned or 0) }} ₽</p>
+    <p><strong>Реферальная ставка:</strong> {{ u.ref_rate or 0 }}%</p>
+    
+    <form method="post" action="{{ url_for('users_balance_update', user_id=u.user_id) }}" style="margin-top: 1rem;">
+        <div class="form-group">
+            <label>Изменить баланс</label>
+            <input type="number" name="delta" step="0.01" placeholder="Введите сумму (+ или -)">
+        </div>
+        <button type="submit" class="btn btn-success">💰 Применить</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>📦 Заказы ({{ orders|length }})</h2>
+    {% if orders %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Тип</th>
+                <th>Статус</th>
+                <th>Сумма</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in orders %}
+            <tr>
+                <td><a href="{{ url_for('orders_view', order_id=o.id) }}">{{ o.id }}</a></td>
+                <td>{{ o.order_type }}</td>
+                <td>{{ o.status }}</td>
+                <td>{{ "%.2f"|format(o.amount or 0) }} ₽</td>
+                <td>{{ o.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Заказов нет</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>💰 Депозиты ({{ deps|length }})</h2>
+    {% if deps %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for d in deps %}
+            <tr>
+                <td>{{ d.id }}</td>
+                <td>{{ "%.2f"|format(d.amount or 0) }} ₽</td>
+                <td>{{ d.status }}</td>
+                <td>{{ d.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Депозитов нет</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('users_list') }}" class="btn btn-secondary">← Назад к списку</a>
+{% endblock %}

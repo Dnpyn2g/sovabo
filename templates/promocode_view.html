@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Промокод {{ promo.code }} - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>🎟️ Промокод: {{ promo.code }}</h2>
+    <p><strong>ID:</strong> {{ promo.id }}</p>
+    <p><strong>Тип скидки:</strong> {{ promo.discount_type }}</p>
+    <p><strong>Значение:</strong> {{ promo.discount_value }}</p>
+    <p><strong>Макс. использований:</strong> {{ promo.max_uses or '∞' }}</p>
+    <p><strong>Использовано:</strong> {{ usage|length }}</p>
+    <p><strong>Активен:</strong> {{ '✅ Да' if promo.is_active else '❌ Нет' }}</p>
+    <p><strong>Создан:</strong> {{ promo.created_at }}</p>
+    
+    <form method="post" style="display: inline;">
+        {% if promo.is_active %}
+        <button type="submit" name="action" value="deactivate" class="btn btn-danger">🚫 Деактивировать</button>
+        {% else %}
+        <button type="submit" name="action" value="activate" class="btn btn-success">✅ Активировать</button>
+        {% endif %}
+        <button type="submit" name="action" value="delete" class="btn btn-danger" onclick="return confirm('Удалить промокод?')">🗑️ Удалить</button>
+    </form>
+</div>
+
+<div class="card">
+    <h3>📊 Использования ({{ usage|length }})</h3>
+    {% if usage %}
+    <table>
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Скидка</th>
+                <th>Дата</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usage %}
+            <tr>
+                <td><a href="{{ url_for('users_view', user_id=u.user_id) }}">{{ u.user_id }}</a></td>
+                <td>{{ "%.2f"|format(u.discount_applied) }} ₽</td>
+                <td>{{ u.used_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Промокод еще не использовался</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('promocodes_list') }}" class="btn btn-secondary">← Назад к списку</a>
+{% endblock %}

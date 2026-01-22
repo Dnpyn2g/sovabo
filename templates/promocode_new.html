@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Новый промокод - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>➕ Создать промокод</h2>
+    
+    <form method="post" action="{{ url_for('promocodes_create') }}">
+        <div class="form-group">
+            <label>Код промокода *</label>
+            <input type="text" name="code" required placeholder="PROMO2024">
+        </div>
+        
+        <div class="form-group">
+            <label>Тип скидки *</label>
+            <select name="discount_type" required>
+                <option value="percent">Процент</option>
+                <option value="fixed">Фиксированная сумма</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Значение скидки *</label>
+            <input type="number" name="discount_value" step="0.01" required placeholder="10">
+        </div>
+        
+        <div class="form-group">
+            <label>Максимум использований (оставьте пустым для безлимита)</label>
+            <input type="number" name="max_uses" placeholder="100">
+        </div>
+        
+        <div class="form-group">
+            <label>Активен</label>
+            <input type="checkbox" name="is_active" checked>
+        </div>
+        
+        <button type="submit" class="btn btn-success">💾 Создать</button>
+        <a href="{{ url_for('promocodes_list') }}" class="btn btn-secondary">❌ Отмена</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}Рассылка - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📢 Рассылка</h2>
+    
+    {% if state.running %}
+    <div class="flash info">
+        ⏳ Рассылка в процессе... ({{ state.sent }} / {{ state.total }} отправлено)
+    </div>
+    {% endif %}
+    
+    {% if state.finished_at %}
+    <div style="background: #f8f9fa; padding: 1rem; border-radius: 4px; margin-bottom: 1rem;">
+        <p><strong>Последняя рассылка:</strong></p>
+        <p>Начало: {{ state.started_at }}</p>
+        <p>Окончание: {{ state.finished_at }}</p>
+        <p>Всего: {{ state.total }}, Отправлено: {{ state.sent }}, Пропущено: {{ state.skipped }}, Ошибок: {{ state.failed }}</p>
+        {% if state.last_error %}
+        <p style="color: #e74c3c;">Последняя ошибка: {{ state.last_error }}</p>
+        {% endif %}
+    </div>
+    {% endif %}
+    
+    <form method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label>Сообщение (HTML поддерживается)</label>
+            <textarea name="message" required placeholder="Введите текст сообщения..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Изображение (необязательно)</label>
+            <input type="file" name="image" accept="image/*">
+        </div>
+        
+        <div class="form-group">
+            <label>Кнопки в главном меню</label>
+            {% for text, callback in menu_buttons %}
+            <label style="display: block; margin-bottom: 0.5rem;">
+                <input type="checkbox" name="buttons" value="{{ callback }}"> {{ text }}
+            </label>
+            {% endfor %}
+        </div>
+        
+        <div class="form-group">
+            <label>Промокод (необязательно)</label>
+            <select name="promo">
+                <option value="">— Без промокода —</option>
+                {% for promo in promocodes %}
+                <option value="{{ promo.code }}">{{ promo.code }} ({{ promo.discount_type }}, {{ promo.discount_value }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-success" {% if state.running %}disabled{% endif %}>📤 Отправить всем</button>
+    </form>
+</div>
+{% endblock %}

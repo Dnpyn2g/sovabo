@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Поддержка - CRM{% endblock %}
+
+{% block head %}
+<style>
+    .chats-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1rem;
+    }
+    .chat-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+        transition: box-shadow 0.3s;
+    }
+    .chat-item:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .chat-item.unread {
+        border-left: 4px solid #e74c3c;
+    }
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    .chat-status {
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: bold;
+    }
+    .status-open {
+        background: #d4edda;
+        color: #155724;
+    }
+    .status-closed {
+        background: #f8d7da;
+        color: #721c24;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>💬 Чаты поддержки</h2>
+    <p>Всего чатов: {{ users|length }}</p>
+</div>
+
+{% if users %}
+<div class="chats-list">
+    {% for u in users %}
+    <div class="chat-item {% if u.unread_count > 0 %}unread{% endif %}">
+        <div class="chat-header">
+            <strong>👤 User: {{ u.user_id }}</strong>
+            {% if u.username %}
+            <span style="font-size: 0.85rem; color: #666;">@{{ u.username }}</span>
+            {% endif %}
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-bottom: 0.5rem;">
+            {% if u.unread_count > 0 %}
+            🔔 Непрочитанных: {{ u.unread_count }}
+            {% else %}
+            ✅ Все прочитано
+            {% endif %}
+        </p>
+        <a href="{{ url_for('support_chat', user_id=u.user_id) }}" class="btn btn-secondary" style="margin-top: 0.5rem; display: inline-block;">📖 Открыть чат</a>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p style="text-align: center; padding: 2rem; color: #999;">Нет активных чатов</p>
+{% endif %}
+
+{% if selected_user %}
+<div class="card" style="margin-top: 2rem;">
+    <h2>💬 Чат с {{ selected_user.username or selected_user.user_id }}</h2>
+    
+    <div class="messages" style="max-height: 400px; overflow-y: auto; background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+        {% for msg in messages %}
+        <div style="margin-bottom: 1rem; padding: 0.75rem; border-radius: 8px; {% if msg.is_from_user %}background: #e3f2fd; text-align: left;{% else %}background: #f1f8e9; text-align: right;{% endif %}">
+            <div style="font-size: 0.8rem; color: #666; margin-bottom: 0.25rem;">
+                {{ '👤 Пользователь' if msg.is_from_user else '🛠️ Админ' }} • {{ msg.created_at }}
+            </div>
+            <div>{{ msg.message_text }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    
+    <form method="post" action="{{ url_for('support_send_message') }}">
+        <input type="hidden" name="user_id" value="{{ user_id }}">
+        <div class="form-group">
+            <textarea name="message" required placeholder="Введите ответ..." style="min-height: 100px;"></textarea>
+        </div>
+        <button type="submit" class="btn btn-success">📤 Отправить</button>
+    </form>
+</div>
+{% endif %}
+{% endblock %}

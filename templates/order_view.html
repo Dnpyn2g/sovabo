@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Заказ {{ o.id }} - CRM{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📦 Заказ #{{ o.id }}</h2>
+    <p><strong>User ID:</strong> <a href="{{ url_for('users_view', user_id=o.user_id) }}">{{ o.user_id }}</a></p>
+    <p><strong>Тип:</strong> {{ o.order_type }}</p>
+    <p><strong>Статус:</strong> {{ o.status }}</p>
+    <p><strong>Сумма:</strong> {{ "%.2f"|format(o.amount or 0) }} ₽</p>
+    <p><strong>Создан:</strong> {{ o.created_at }}</p>
+    {% if o.details %}
+    <p><strong>Детали:</strong> <pre style="background: #f5f5f5; padding: 10px; border-radius: 4px;">{{ o.details }}</pre></p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>🔗 Пиры ({{ peers|length }})</h2>
+    {% if peers %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Название</th>
+                <th>Протокол</th>
+                <th>Создан</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in peers %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.peer_name }}</td>
+                <td>{{ p.protocol }}</td>
+                <td>{{ p.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Пиров нет</p>
+    {% endif %}
+</div>
+
+<a href="{{ url_for('orders_list') }}" class="btn btn-secondary">← Назад к списку</a>
+{% endblock %}
